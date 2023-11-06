@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<springProperty scope="context" name="LOG_LEVEL" source="kma.logging.level"/>
+    <springProperty scope="context" name="LOG_DIR" source="kma.logging.dir"/>
+    
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+	</appender>
+	
+	<appender name="kkomarang" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/kkomarang.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%-5level] %logger{36} - %msg%n</Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/%d{yyyy-MM-dd}/kkomarang.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+            	<maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+	
+	<logger name="org.springframework" level="ERROR" additivity="false">
+		<appender-ref ref="kkomarang" />
+	</logger>
+    
+    <logger name="com.kkomarang" level="DEBUG" additivity="false">
+    	<appender-ref ref="kkomarang" />
+    	<appender-ref ref="console"/>
+    </logger>
+    
+    <root level="${LOG_LEVEL}">
+        <appender-ref ref="console"/>
+        <appender-ref ref="kkomarang"/>
+    </root>
+</configuration>
